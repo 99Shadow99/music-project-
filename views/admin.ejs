@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>admin</h1>
+    <form action="/admin" method="POST">
+        <input type="text" name="song" placeholder="Enter song name" >
+        <input type="text" name="album" placeholder="Enter album name" >
+        <input type="text" name="artist" placeholder="Enter artist name" >
+        <input type="submit">
+        
+    </form>
+    <%data.forEach((obj)=>{
+        %>
+        <div>
+            <h3>song <%=obj.song%></h3>
+            <h3>album <%=obj.album%></h3>
+            <h3>artist <%=obj.artist%></h3>
+        </div>
+        <%
+    })%>
+    
+
+</body>
+</html>
