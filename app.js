@@ -16,10 +16,7 @@ const path = require("path");
 
 const ytdl = require("ytdl-core");
 
-
-
 const ytdlp = require("yt-dlp-exec");
-
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
@@ -50,12 +47,13 @@ app.post("/", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await userModel.findOne({ email: email });
+    req.user = user; 
     //user check
     if (user) {
       const result = await bcrypt.compare(password, user.password);
       if (result) {
         var token = jwt.sign(
-          { user: user.userName, user: user.email },
+          { user: user.userName, email: user.email, _id: user._id },
           "screat sss"
         );
 
@@ -108,8 +106,15 @@ app.post("/register", async (req, res) => {
 });
 
 app.get("/home", auth, async (req, res) => {
-  res.render("home.ejs");
+  try {
+    const user = await userModel.findById(req.user._id).populate("songs");
+    res.render("home.ejs", { songs: user.songs || [] });
+  } catch (err) {
+    console.error("Home load error:", err);
+    res.status(500).send("Error loading playlist");
+  }
 });
+
 
 app.get("/admin", async (req, res) => {
   const data = await songModel.find({});
@@ -134,7 +139,7 @@ app.get("/search", async (req, res) => {
   if (!query) {
     return res.status(400).json({ error: "Missing search query" });
   }
-//url yt api
+  //url yt api
   const searchUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(
     query
   )}&type=video&maxResults=1&key=${apiKey}`;
@@ -142,7 +147,7 @@ app.get("/search", async (req, res) => {
   try {
     const response = await fetch(searchUrl);
     const data = await response.json();
-    //check 
+    //check
     if (!data.items || data.items.length === 0) {
       return res.status(404).json({ error: "No videos found" });
     }
@@ -196,9 +201,41 @@ app.get("/audio", async (req, res) => {
     res.json({ audioUrl: audioUrl.trim() });
   } catch (error) {
     console.error("Error fetching audio:", error);
-    res.status(500).json({ error: "Error fetching audio" });
+    
   }
 });
+
+app.post("/add",auth, async (req, res) => {
+  try {
+    const { title, artist, artwork, url } = req.body;
+
+   // Check if user ID is available
+    if (!title || !url || !req.user || !req.user._id) {
+      return res.status(400).json({ error: "Missing fields or user not authenticated" });
+    }
+
+    // 1. Create new song with addedBy
+    const newSong = await songModel.create({
+      title,
+      artist,
+      image: artwork,
+      audioUrl:url,
+      addedBy: req.user._id,
+    });
+
+    // 2. Push song._id to user's songs array
+    await userModel.findByIdAndUpdate(req.user._id, {
+      $push: { songs: newSong._id }
+    });
+
+    res.status(201).json({ message: "Song added successfully", song: newSong });
+
+  } catch (error) {
+    console.error("Error adding song:", error);
+    res.status(500).json({ error: "Error saving song" });
+  }
+});
+
 
 app.get("/logout", async (req, res) => {
   res.clearCookie("jwt");

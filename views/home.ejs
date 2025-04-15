@@ -1,116 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Music Search</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white min-h-screen">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Music Search</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white min-h-screen"
+  >
+    <div class="max-w-4xl mx-auto px-4 py-10 space-y-6">
+      <h1 class="text-4xl font-bold text-center text-pink-400">
+        🎵 Music Search
+      </h1>
 
-  <div class="max-w-4xl mx-auto px-4 py-10 space-y-6">
-    <h1 class="text-4xl font-bold text-center text-pink-400">🎵 Music Search</h1>
+      <!-- Search Bar -->
+      <div class="flex gap-2 justify-center">
+        <input
+          id="searchBox"
+          type="text"
+          placeholder="Search for a song..."
+          class="w-full max-w-md px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        />
+        <button
+          onclick="searchAudio()"
+          class="bg-pink-500 px-5 py-2 rounded hover:bg-pink-600 transition"
+        >
+          Search
+        </button>
+      </div>
 
-    <!-- Search Bar -->
-    <div class="flex gap-2 justify-center">
-      <input id="searchBox" type="text" placeholder="Search for a song..."
-        class="w-full max-w-md px-4 py-2 rounded-md bg-gray-800 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500">
-      <button onclick="searchAudio()" class="bg-pink-500 px-5 py-2 rounded hover:bg-pink-600 transition">Search</button>
-    </div>
+      <!-- Audio Player -->
+      <div
+        id="playerSection"
+        class="bg-gray-800 p-4 rounded-lg shadow-lg space-y-4"
+      >
+        <h2 class="text-xl font-semibold">Now Playing</h2>
+        <div class="flex items-center gap-4">
+          <img
+            id="artwork"
+            src="https://picsum.photos/seed/picsum/200/300"
+            class="w-24 h-24 rounded-lg object-cover"
+          />
+          <div>
+            <p id="trackTitle" class="text-lg font-semibold">No Song</p>
+            <p id="trackArtist" class="text-sm text-gray-400">Unknown Artist</p>
+          </div>
+        </div>
+        <audio id="audioPlayer" controls class="w-full mt-2"></audio>
+      </div>
 
-    <!-- Audio Player -->
-    <div id="playerSection" class="bg-gray-800 p-4 rounded-lg shadow-lg space-y-4">
-      <h2 class="text-xl font-semibold">Now Playing</h2>
-      <div class="flex items-center gap-4">
-        <img id="artwork" src="https://picsum.photos/seed/picsum/200/300" class="w-24 h-24 rounded-lg object-cover">
-        <div>
-          <p id="trackTitle" class="text-lg font-semibold">No Song</p>
-          <p id="trackArtist" class="text-sm text-gray-400">Unknown Artist</p>
+      <!-- Playlist Section -->
+      <div class="bg-gray-900 p-4 rounded-lg shadow-xl">
+        <h2 class="text-xl font-bold mb-4 text-pink-300">🎶 recent play song</h2>
+        <div id="playlist" class="space-y-3">
+          <!-- Songs will be added here -->
         </div>
       </div>
-      <audio id="audioPlayer" controls class="w-full mt-2"></audio>
     </div>
 
-    <!-- Playlist Section -->
     <div class="bg-gray-900 p-4 rounded-lg shadow-xl">
       <h2 class="text-xl font-bold mb-4 text-pink-300">🎶 Playlist</h2>
+    
       <div id="playlist" class="space-y-3">
-        <!-- Songs will be added here -->
+        <% songs.forEach(song => { %>
+          <div class="flex items-center bg-gray-800 p-3 rounded-md shadow-md">
+            <img
+              src="<%= song.image %>"
+              alt="cover"
+              class="w-16 h-16 rounded-lg object-cover"
+            />
+            <div class="ml-4 flex-1">
+              <p class="font-semibold text-white"><%= song.title %></p>
+              <p class="text-sm text-gray-400"><%= song.artist %></p>
+            </div>
+            <button
+            onclick="
+            console.log('playing');
+            const track = {
+              title: '<%= song.title %>',
+              artist: '<%= song.artist %>',
+              artwork: '<%= song.image %>',
+              url: '<%= song.audioUrl %>'
+            };
+            playTrack(track);
+            updatePlaylist(track);
+          "
+              class="bg-pink-500 hover:bg-pink-600 text-white px-3 py-1 rounded transition"
+            >
+              ▶ Play
+            </button>
+          </div>
+        <% }) %>
       </div>
     </div>
-  </div>
+    
 
-  <script>
-    const playlist = [];
+    <script>
+      const playlist = [];
 
-    async function searchAudio() {
-      const query = document.getElementById("searchBox").value.trim();
-      if (!query) {
-        alert("Please enter a song name!");
-        return;
-      }
-
-      try {
-        // Fetch video ID from backend
-        const response = await fetch(`http://localhost:3000/search?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-
-        if (!data.videoId) {
-          alert("No song found");
+      async function searchAudio() {
+        const query = document.getElementById("searchBox").value.trim();
+        if (!query) {
+          alert("Please enter a song name!");
           return;
         }
 
-        // Fetch audio URL from backend
-        const audioRes = await fetch(`http://localhost:3000/audio?videoId=${data.videoId}`);
-        const audioData = await audioRes.json();
-        const audioUrl = audioData.audioUrl;
+        try {
+          // Fetch video ID from backend
+          const response = await fetch(
+            `http://localhost:3000/search?q=${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
 
-        if (!audioUrl) {
-          alert("Failed to get audio URL");
-          return;
+          if (!data.videoId) {
+            alert("No song found");
+            return;
+          }
+
+          // Fetch audio URL from backend
+          const audioRes = await fetch(
+            `http://localhost:3000/audio?videoId=${data.videoId}`
+          );
+          const audioData = await audioRes.json();
+          const audioUrl = audioData.audioUrl;
+
+          if (!audioUrl) {
+            alert("Failed to get audio URL");
+            return;
+          }
+
+          const track = {
+            title: query,
+            artist: "Random Artist",
+            artwork:
+              "https://picsum.photos/seed/" +
+              Math.floor(Math.random() * 1000) +
+              "/200/300",
+            url: audioUrl,
+          };
+
+          playTrack(track);
+          updatePlaylist(track);
+
+          const songResponse = await fetch("http://localhost:3000/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(track),
+          });
+          const CreateData = await songResponse.json();
+          console.log("Song added to database:", CreateData);
+
+        } catch (err) {
+          console.error("Fetch error:", err);
         }
-
-        const track = {
-          title: query,
-          artist: "Random Artist",
-          artwork: "https://picsum.photos/seed/" + Math.floor(Math.random() * 1000) + "/200/300",
-          url: audioUrl
-        };
-
-        playTrack(track);
-        updatePlaylist(track);
-
-      } catch (err) {
-        console.error("Fetch error:", err);
       }
-    }
 
-    function playTrack(track) {
-      const audioPlayer = document.getElementById("audioPlayer");
-      document.getElementById("trackTitle").innerText = track.title;
-      document.getElementById("trackArtist").innerText = track.artist;
-      document.getElementById("artwork").src = track.artwork;
-      audioPlayer.src = track.url;
-      audioPlayer.play();
-    }
-
-    function updatePlaylist(track) {
-      const exists = playlist.find(t => t.url === track.url);
-      if (!exists) {
-        playlist.push(track);
-        renderPlaylist();
+      function playTrack(track) {
+        const audioPlayer = document.getElementById("audioPlayer");
+        document.getElementById("trackTitle").innerText = track.title;
+        document.getElementById("trackArtist").innerText = track.artist;
+        document.getElementById("artwork").src = track.artwork;
+        audioPlayer.src = track.url;
+        audioPlayer.play();
       }
-    }
 
-    function renderPlaylist() {
-      const container = document.getElementById("playlist");
-      container.innerHTML = "";
+      function updatePlaylist(track) {
+        const exists = playlist.find((t) => t.url === track.url);
+        if (!exists) {
+          playlist.push(track);
+          renderPlaylist();
+        }
+      }
 
-      playlist.forEach((track, index) => {
-        const item = document.createElement("div");
-        item.className = "flex items-center justify-between bg-gray-800 p-3 rounded-md hover:bg-gray-700 transition";
+      function renderPlaylist() {
+        const container = document.getElementById("playlist");
+        container.innerHTML = "";
 
-        item.innerHTML = `
+        playlist.forEach((track, index) => {
+          const item = document.createElement("div");
+          item.className =
+            "flex items-center justify-between bg-gray-800 p-3 rounded-md hover:bg-gray-700 transition";
+
+          item.innerHTML = `
           <div class="flex items-center gap-3">
             <img src="${track.artwork}" class="w-12 h-12 rounded object-cover"/>
             <div>
@@ -120,14 +194,9 @@
           </div>
           <button onclick="playTrack(playlist[${index}])" class="text-pink-400 hover:text-pink-600 transition">▶️</button>
         `;
-        container.appendChild(item);
-      });
-    }
-  </script>
-
-</body>
+          container.appendChild(item);
+        });
+      }
+    </script>
+  </body>
 </html>
-
-
-
-
