@@ -6,7 +6,7 @@ const Login = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setAnimationComplete(true);
-    }, 500); // Delay for initial fade-in animation
+    }, 500); 
 
     return () => clearTimeout(timer);
   }, []);
