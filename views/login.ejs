@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Login</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 </head>
-<body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 min-h-screen flex items-center justify-center px-4 text-white">
+
+<body
+  class="bg-gradient-to-br from-gray-900 via-black to-gray-800 min-h-screen flex items-center justify-center px-4 text-white">
 
   <div id="loginBox" class="w-full max-w-md p-8 rounded-2xl bg-gray-900 shadow-2xl border border-gray-800">
     <h1 class="text-3xl font-extrabold mb-6 text-center text-pink-400 tracking-wide">🔐 Welcome Back</h1>
@@ -15,40 +18,23 @@
     <form action="/" method="POST" class="space-y-6">
       <div>
         <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-        <input
-          type="email"
-          name="email"
-          id="email"
-          placeholder="Enter your email"
-          required
-          class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-        />
+        <input type="email" name="email" id="email" placeholder="Enter your email" required
+          class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none" />
       </div>
 
       <div>
         <label for="password" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
-        <input
-          type="password"
-          name="password"
-          id="password"
-          placeholder="Enter your password"
-          required
-          class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none"
-        />
+        <input type="password" name="password" id="password" placeholder="Enter your password" required
+          class="w-full px-4 py-3 rounded-lg bg-gray-800 text-white placeholder-gray-500 border border-gray-700 focus:ring-2 focus:ring-pink-500 focus:outline-none" />
       </div>
 
-      <button
-        type="submit"
-        class="w-full py-3 rounded-lg bg-pink-500 text-white font-semibold  opacity-[1]"
-      >
-        Login 
+      <button type="submit" class="w-full py-3 rounded-lg bg-pink-500 text-white font-semibold  opacity-[1]">
+        Login
       </button>
-      <a href="/register"
-        class="w-full py-3 rounded-lg bg-gray-800 text-white font-semibold  opacity-[1]"
-      >
+      <a href="/register" class="w-full py-3 rounded-lg bg-gray-800 text-white font-semibold  opacity-[1]">
         don't have an account? <span class="text-pink-500">Register</span>
       </a>
-  
+
     </form>
   </div>
 
@@ -71,4 +57,5 @@
   </script>
 
 </body>
+
 </html>
